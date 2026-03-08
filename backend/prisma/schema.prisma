@@ -11,6 +11,7 @@ model Role {
   id          Int     @id @default(autoincrement())
   value       String  @unique
   description String?
+  users       User[]
 
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
@@ -18,11 +19,11 @@ model Role {
 
 model User {
   id          Int     @id @default(autoincrement())
-  
   email       String  @unique
   password    String
   name        String
-  
+  roles       Role[]
+
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }
