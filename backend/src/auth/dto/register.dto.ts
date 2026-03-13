@@ -1,0 +1,23 @@
+import {
+  IsEmail,
+  IsNotEmpty,
+  IsString,
+  MinLength,
+  MaxLength,
+} from 'class-validator';
+
+export class RegisterDto {
+  @IsEmail({}, { message: 'Пожалуйста введите корректный email' })
+  @IsNotEmpty({ message: 'Пожалуйста введите email' })
+  email: string;
+
+  @IsString({ message: 'Пароль должен быть строкой' })
+  @IsNotEmpty({ message: 'Пожалуйста введите пароль' })
+  @MinLength(6, { message: 'Пароль должен содержать минимум 6 символов' })
+  password: string;
+
+  @IsString({ message: 'Имя должно быть строкой' })
+  @IsNotEmpty({ message: 'Пожалуйста введите имя' })
+  @MaxLength(50, { message: 'Имя не должно превышать 50 символов' })
+  name: string;
+}
