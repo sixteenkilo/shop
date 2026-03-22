@@ -4,20 +4,32 @@ import HelloWorld from './components/HelloWorld.vue'
 </script>
 
 <template>
-  <header>
-    <img alt="Vue logo" class="logo" src="@/assets/logo.svg" width="125" height="125" />
+  <n-config-provider>
+    <n-message-provider>
+      <n-notification-provider>
+        <n-dialog-provider>
+          <header>
+            <img alt="Vue logo" class="logo" src="@/assets/logo.svg" width="125" height="125" />
 
-    <div class="wrapper">
-      <HelloWorld msg="You did it!" />
+            <div class="wrapper">
+              <HelloWorld msg="You did it!" />
 
-      <nav>
-        <RouterLink to="/">Home</RouterLink>
-        <RouterLink to="/about">About</RouterLink>
-      </nav>
-    </div>
-  </header>
+              <n-space class="nav" justify="center" align="center">
+                <RouterLink v-slot="{ navigate }" to="/" custom>
+                  <n-button quaternary type="primary" @click="navigate">Home</n-button>
+                </RouterLink>
+                <RouterLink v-slot="{ navigate }" to="/about" custom>
+                  <n-button quaternary type="primary" @click="navigate">About</n-button>
+                </RouterLink>
+              </n-space>
+            </div>
+          </header>
 
-  <RouterView />
+          <RouterView />
+        </n-dialog-provider>
+      </n-notification-provider>
+    </n-message-provider>
+  </n-config-provider>
 </template>
 
 <style scoped>
@@ -31,29 +43,9 @@ header {
   margin: 0 auto 2rem;
 }
 
-nav {
+.nav {
   width: 100%;
-  font-size: 12px;
-  text-align: center;
   margin-top: 2rem;
-}
-
-nav a.router-link-exact-active {
-  color: var(--color-text);
-}
-
-nav a.router-link-exact-active:hover {
-  background-color: transparent;
-}
-
-nav a {
-  display: inline-block;
-  padding: 0 1rem;
-  border-left: 1px solid var(--color-border);
-}
-
-nav a:first-of-type {
-  border: 0;
 }
 
 @media (min-width: 1024px) {
@@ -73,11 +65,10 @@ nav a:first-of-type {
     flex-wrap: wrap;
   }
 
-  nav {
-    text-align: left;
+  .nav {
+    justify-content: flex-start !important;
     margin-left: -1rem;
     font-size: 1rem;
-
     padding: 1rem 0;
     margin-top: 1rem;
   }
