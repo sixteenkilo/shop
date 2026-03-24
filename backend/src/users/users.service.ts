@@ -3,9 +3,24 @@ import * as bcrypt from 'bcrypt';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { PrismaService } from '../prisma/prisma.service';
-import { User } from '@prisma/client';
+import { Prisma } from '@prisma/client';
 
-type UserWithoutPassword = Omit<User, 'password'>;
+type UserWithoutPassword = Prisma.UserGetPayload<{
+  select: {
+    id: true;
+    email: true;
+    name: true;
+    roles: {
+      select: {
+        id: true;
+        value: true;
+        description: true;
+      };
+    };
+    createdAt: true;
+    updatedAt: true;
+  };
+}>;
 
 @Injectable()
 export class UsersService {
@@ -15,6 +30,13 @@ export class UsersService {
     id: true,
     email: true,
     name: true,
+    roles: {
+      select: {
+        id: true,
+        value: true,
+        description: true,
+      },
+    },
     createdAt: true,
     updatedAt: true,
   } as const;
@@ -55,6 +77,13 @@ export class UsersService {
         email: dto.email,
         password: hashedPassword,
         name: dto.name,
+        ...(dto.roleIds?.length
+          ? {
+              roles: {
+                connect: dto.roleIds.map((id) => ({ id })),
+              },
+            }
+          : {}),
       },
       select: this.selectWithoutPassword,
     });
@@ -73,7 +102,7 @@ export class UsersService {
     }
 
     if (dto.email && dto.email !== user.email) {
-      const exists = await this.existsUser(dto.email);
+      const exists = await this.existsUser(dto.email, id);
       if (exists) {
         throw new HttpException(
           'Пользователь с таким email уже существует',
@@ -82,12 +111,15 @@ export class UsersService {
       }
     }
 
-    const data: { email?: string; password?: string; name?: string } = {
-      ...dto,
-    };
+    const { roleIds, password, ...scalarFields } = dto;
+    const data: Prisma.UserUpdateInput = { ...scalarFields };
 
-    if (dto.password) {
-      data.password = await bcrypt.hash(dto.password, 10);
+    if (password) {
+      data.password = await bcrypt.hash(password, 10);
+    }
+
+    if (roleIds !== undefined) {
+      data.roles = { set: roleIds.map((roleId) => ({ id: roleId })) };
     }
 
     return this.prisma.user.update({

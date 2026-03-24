@@ -1,6 +1,10 @@
 import {
+  ArrayUnique,
+  IsArray,
   IsEmail,
+  IsInt,
   IsNotEmpty,
+  IsOptional,
   IsString,
   MinLength,
   MaxLength,
@@ -20,4 +24,10 @@ export class CreateUserDto {
   @IsNotEmpty({ message: 'Пожалуйста введите имя' })
   @MaxLength(50, { message: 'Имя не должно превышать 50 символов' })
   name: string;
+
+  @IsOptional()
+  @IsArray({ message: 'roleIds должны быть массивом' })
+  @ArrayUnique({ message: 'roleIds не должны содержать дубликаты' })
+  @IsInt({ each: true, message: 'Каждый id роли должен быть числом' })
+  roleIds?: number[];
 }
