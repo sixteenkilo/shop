@@ -22,7 +22,7 @@ export class AuthController {
       secure: false,
       sameSite: 'lax',
       maxAge: 7 * 24 * 60 * 60 * 1000,
-      path: '/auth/refresh',
+      path: '/',
     });
 
     return {
@@ -43,7 +43,7 @@ export class AuthController {
       secure: false,
       sameSite: 'lax',
       maxAge: 7 * 24 * 60 * 60 * 1000,
-      path: '/auth/refresh',
+      path: '/',
     });
 
     return {
@@ -53,8 +53,12 @@ export class AuthController {
   }
 
   @Post('refresh')
-  async refresh(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
-    const refreshToken = req.cookies?.refreshToken;
+  async refresh(
+    @Req() req: Request,
+    @Body() body: { refreshToken?: string },
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    const refreshToken = req.cookies?.refreshToken || body?.refreshToken;
     const result = await this.authService.refreshTokens(refreshToken);
 
     res.cookie('refreshToken', result.refreshToken, {
@@ -62,7 +66,7 @@ export class AuthController {
       secure: false,
       sameSite: 'lax',
       maxAge: 7 * 24 * 60 * 60 * 1000,
-      path: '/auth/refresh',
+      path: '/',
     });
 
     return {
@@ -83,7 +87,7 @@ export class AuthController {
       httpOnly: true,
       secure: false,
       sameSite: 'lax',
-      path: '/auth/refresh',
+      path: '/',
     });
 
     return {
