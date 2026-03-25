@@ -39,3 +39,13 @@ model Token {
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 }
+
+
+model Category {
+  id          Int     @id @default(autoincrement())
+  value       String  @unique
+  description String?
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
