@@ -32,7 +32,7 @@ export class CategoriesService {
 
     if (exists) {
       throw new HttpException(
-        'Категория с таким кодом уже существует',
+        'Категория с таким названием уже существует',
         HttpStatus.BAD_REQUEST,
       );
     }
@@ -53,7 +53,7 @@ export class CategoriesService {
       const taken = await this.existsCategory(dto.value, id);
       if (taken) {
         throw new HttpException(
-          'Категория с таким кодом уже существует',
+          'Категория с таким названием уже существует',
           HttpStatus.BAD_REQUEST,
         );
       }
