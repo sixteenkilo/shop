@@ -22,6 +22,20 @@ export class CreateCategoryDto {
   })
   value: string;
 
+  @IsString({ message: 'Slug должен быть строкой' })
+  @Transform(({ value }: { value: unknown }) =>
+    typeof value === 'string' ? value.trim().toLowerCase() : value,
+  )
+  @IsNotEmpty({ message: 'Укажите slug для URL' })
+  @Length(2, 255, {
+    message: 'Slug должен быть от 2 до 255 символов',
+  })
+  @Matches(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, {
+    message:
+      'Slug может содержать только строчные латинские буквы, цифры и дефис',
+  })
+  slug: string;
+
   @Transform(({ value }: { value: unknown }) =>
     typeof value === 'string' ? value.trim() : value,
   )

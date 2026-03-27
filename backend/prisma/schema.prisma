@@ -44,6 +44,7 @@ model Token {
 model Category {
   id          Int     @id @default(autoincrement())
   value       String  @unique
+  slug        String? @unique
   description String?
 
   createdAt   DateTime @default(now())

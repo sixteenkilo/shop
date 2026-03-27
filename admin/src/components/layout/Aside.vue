@@ -51,6 +51,17 @@ const menuOptions = [
       ),
     key: 'roles',
   },
+  {
+    label: () =>
+      h(
+        RouterLink,
+        {
+          to: '/categories',
+        },
+        { default: () => 'Категории' },
+      ),
+    key: 'categories',
+  },
 ]
 </script>
 

@@ -3,6 +3,7 @@ import HomeView from '../views/HomeView.vue'
 import UsersView from '../views/UsersViews.vue'
 import RolesView from '../views/RolesView.vue'
 import AuthView from '@/views/AuthView.vue'
+import CategoriesView from '@/views/CategoriesView.vue'
 import Layout from '@/views/layout/Layout.vue'
 import { useAuthStore } from '@/stores/auth'
 import { pinia } from '@/stores/pinia'
@@ -57,6 +58,19 @@ const router = createRouter({
             breadcrumbs: [
               { label: 'Главная', to: '/' },
               { label: 'Роли' },
+            ],
+            requiresAuth: true,
+          },
+        },
+        {
+          path: 'categories',
+          name: 'categories',
+          component: CategoriesView,
+          meta: {
+            title: 'Категории',
+            breadcrumbs: [
+              { label: 'Главная', to: '/' },
+              { label: 'Категории' },
             ],
             requiresAuth: true,
           },

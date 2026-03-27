@@ -28,11 +28,20 @@ export class CategoriesService {
   }
 
   async createCategory(dto: CreateCategoryDto): Promise<Category> {
-    const exists = await this.existsCategory(dto.value);
+    const [valueTaken, slugTaken] = await Promise.all([
+      this.existsCategoryValue(dto.value),
+      this.existsCategorySlug(dto.slug),
+    ]);
 
-    if (exists) {
+    if (valueTaken) {
       throw new HttpException(
         'Категория с таким названием уже существует',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+    if (slugTaken) {
+      throw new HttpException(
+        'Категория с таким slug уже существует',
         HttpStatus.BAD_REQUEST,
       );
     }
@@ -50,7 +59,7 @@ export class CategoriesService {
     }
 
     if (dto.value !== undefined && dto.value !== '') {
-      const taken = await this.existsCategory(dto.value, id);
+      const taken = await this.existsCategoryValue(dto.value, id);
       if (taken) {
         throw new HttpException(
           'Категория с таким названием уже существует',
@@ -58,11 +67,23 @@ export class CategoriesService {
         );
       }
     }
+    if (dto.slug !== undefined && dto.slug !== '') {
+      const taken = await this.existsCategorySlug(dto.slug, id);
+      if (taken) {
+        throw new HttpException(
+          'Категория с таким slug уже существует',
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+    }
 
-    const data: { value?: string; description?: string | null } = {};
+    const data: { value?: string; slug?: string; description?: string | null } = {};
 
     if (dto.value !== undefined) {
       data.value = dto.value;
+    }
+    if (dto.slug !== undefined) {
+      data.slug = dto.slug;
     }
     if (dto.description !== undefined) {
       data.description = dto.description === '' ? null : dto.description;
@@ -88,10 +109,22 @@ export class CategoriesService {
     });
   }
 
-  async existsCategory(value: string, excludeId?: number): Promise<boolean> {
+  async existsCategoryValue(value: string, excludeId?: number): Promise<boolean> {
     const row = await this.prisma.category.findFirst({
       where: {
         value,
+        ...(excludeId !== undefined && { NOT: { id: excludeId } }),
+      },
+      select: { id: true },
+    });
+
+    return !!row;
+  }
+
+  async existsCategorySlug(slug: string, excludeId?: number): Promise<boolean> {
+    const row = await this.prisma.category.findFirst({
+      where: {
+        slug,
         ...(excludeId !== undefined && { NOT: { id: excludeId } }),
       },
       select: { id: true },
